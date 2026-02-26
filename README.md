@@ -1,64 +1,60 @@
-# 🛡️ Task Manager CLI: Enterprise C# Architecture
+# 🛡️ Task Manager CLI: Enterprise C# & .NET 9 Architecture
 
-A professional-grade Command Line Interface (CLI) application built with **.NET 9**. This project serves as a comprehensive demonstration of Clean Architecture, the Repository Pattern, and Defensive Programming in C#.
+A professional-grade Command Line Interface (CLI) application demonstrating **Clean Architecture**, **SOLID principles**, and **Relational Data Persistence**. This project evolved through four intensive modules, moving from a simple script to a robust, test-verified enterprise foundation.
 
-## 🚀 Module 1 Summary: The Foundation
+---
 
-Over the course of Module 1, the application evolved from a simple console script into a robust, persistent, and "crash-proof" system.
-
-### 🏗️ 1. Structural Design (The "Brain")
-* **Repository Pattern:** Implemented a decoupled architecture using `IRepository<T>`. This ensures the UI is entirely independent of the storage implementation.
-* **Generics & Abstraction:** Leveraged C# Generics with constraints (`where T : class, IEntity`) to create a reusable data engine capable of handling any entity type.
-* **Asynchronous Programming:** Built from the ground up using `async/await` and `Task` to mimic real-world enterprise environments where data operations are non-blocking.
-
-
-
-### 💾 2. Persistence & Data Engineering (The "Memory")
-* **JSON Serialization:** Integrated `System.Text.Json` to transform live C# objects into persistent storage, ensuring data survives application restarts.
-* **Stateless Transaction Logic:** Developed a **Load-Modify-Save** cycle in the `JsonRepository`, maintaining data integrity and ensuring the `.json` file remains the single "Source of Truth."
-* **Cross-Platform File I/O:** Utilized `Path.Combine` and `AppDomain` base directories to ensure the application remains portable across Windows, Mac, and Linux environments.
+## 🏗️ Module 1: Structural Foundations & Defensive Coding
+The goal was to build a system that is both modular and "crash-proof."
+* **Repository Pattern:** Implemented `IRepository<T>` to decouple the User Interface from data access logic.
+* **Generics:** Leveraged C# Generics with type constraints (`where T : class, IEntity`) for a reusable data engine.
+* **Defensive Layer:** Developed custom **Exception Middleware** (e.g., `EntityNotFoundException`) and Guard Clauses to ensure application stability against invalid user inputs.
 
 
 
-### 🛡️ 3. Defensive Programming (The "Safety")
-* **Custom Exceptions:** Developed a domain-specific Exception layer (e.g., `EntityNotFoundException`) to provide meaningful feedback instead of generic system crashes.
-* **Guard Clauses:** Implemented logic gates in the Repository layer to intercept invalid requests (e.g., deleting a non-existent ID) before they reach the data file.
-* **Input Validation:** Added a validation layer in the UI to prevent "dirty data" (empty titles/whitespace) from entering the persistence layer.
-* **Graceful Degradation:** Wrapped the main execution loop in `try-catch` blocks, allowing the app to recover from errors and continue running.
+---
+
+## 🧪 Module 2: Quality Assurance (xUnit & Moq)
+Architecture is nothing without verification. This module focused on automated testing.
+* **Unit Testing:** Built a comprehensive suite using **xUnit** to verify the core CRUD lifecycle.
+* **Mocking:** Utilized **Moq** to simulate the data layer, allowing for lightning-fast tests that execute in memory without touching the physical disk.
+* **Negative Testing:** Specifically tested failure states to ensure the "Defensive Layer" correctly intercepts and reports system errors.
 
 
 
-## 🧪 Module 2: Automated Testing & Mocking
-Implemented a robust Quality Assurance (QA) layer to ensure application stability and logic verification.
+---
 
-### Technical Achievements:
-* **Unit Testing (xUnit):** Developed automated test cases covering the full CRUD lifecycle, ensuring 100% reliability of the Repository logic.
-* **Mocking (Moq):** Leveraged the `Moq` library to simulate data-layer dependencies. This allows for high-speed testing by isolating business logic from Physical File I/O.
-* **Negative Testing:** Verified that the "Defensive Layer" correctly triggers custom exceptions (`EntityNotFoundException`) when encountering invalid data.
-* **Behavioral Verification:** Used Mock Verifications to confirm that the application interacts with the data layer exactly as intended, preventing redundant operations.
-
+## 💉 Module 3: Dependency Injection & Service Layer
+Refactored the application into a Service-Oriented Architecture (SOA) to achieve true loose coupling.
+* **Inversion of Control (IoC):** Integrated `Microsoft.Extensions.DependencyInjection` to manage object lifetimes (**Singleton**, **Scoped**, and **Transient**).
+* **Service Layer:** Introduced a `TaskService` to encapsulate business logic, ensuring the `Program.cs` (UI) remains "thin" and focused only on user interaction.
+* **Dependency Inversion:** Removed all hard-coded dependencies, allowing the system to be highly extensible and testable.
 
 
-### Test Coverage Includes:
-- **Happy Path:** Adding, updating, and retrieving tasks.
-- **Edge Cases:** Handling empty lists and non-existent IDs.
-- **System Failure:** Mocking disk/database errors to test application resilience.
 
-## 🏗️ Module 3: Dependency Injection & Service Layer
-Refactored the application architecture to follow the Dependency Inversion Principle (SOLID), moving towards a Service-Oriented Architecture.
+---
 
-### Technical Achievements:
-* **Dependency Injection (DI):** Integrated `Microsoft.Extensions.DependencyInjection` to manage object lifecycles and dependencies centrally.
-* **Service Layer Pattern:** Introduced a `TaskService` to encapsulate business logic, further decoupling the User Interface from the Data Access Layer.
-* **Singleton & Transient Lifetimes:** Leveraged specific service lifetimes to optimize memory usage and ensure data consistency across the application.
-* **Clean Architecture:** Successfully removed "hard-coded" dependencies, allowing for seamless swapping of storage engines or UI frameworks.
+## 🗄️ Module 4: Relational Persistence (EF Core & SQL)
+Transitioned from flat-file storage to a professional relational database environment.
+* **EF Core Integration:** Migrated from `tasks.json` to **SQLite** using **Entity Framework Core**.
+* **Code-First Migrations:** Managed database schema evolution through version-controlled migrations (`Add-Migration` & `Update-Database`).
+* **Architectural Flexibility:** Demonstrated the power of the Repository Pattern by swapping the entire storage engine with only **two lines of code change** in the DI container.
 
-## 🛠️ Tech Stack & Patterns
-* **Framework:** .NET 9 (C# 13)
-* **Namespaces:** `System.Text.Json`, `System.IO`, `System.Linq`, `System.Threading.Tasks`
-* **Design Patterns:** Repository Pattern, Interface Segregation, Generic Programming, Defensive Programming.
+
+
+---
+
+## 🛠️ Tech Stack & Skills
+* **Language:** C# 13 (.NET 9)
+* **Data Layer:** Entity Framework Core, SQLite, JSON Serialization
+* **Testing:** xUnit, Moq, Fluent Assertions
+* **Patterns:** SOLID Principles, Repository Pattern, Dependency Injection, Clean Architecture
+
+---
 
 ## 📈 Roadmap
-- [x] **Module 1:** OOP, Persistence, and Error Handling.
-- [ ] **Module 2:** Unit Testing with xUnit and Mocking.
-- [ ] **Module 3:** Transitioning to SQL Server with Entity Framework Core.
+- [x] Module 1: OOP & Defensive Programming
+- [x] Module 2: Automated Unit Testing
+- [x] Module 3: Dependency Injection & Service Layers
+- [x] Module 4: SQL Database Integration (EF Core)
+- [ ] **Next:** Module 5: ASP.NET Core Web API (RESTful Services)
