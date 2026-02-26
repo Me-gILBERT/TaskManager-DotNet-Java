@@ -27,6 +27,22 @@ Over the course of Module 1, the application evolved from a simple console scrip
 * **Graceful Degradation:** Wrapped the main execution loop in `try-catch` blocks, allowing the app to recover from errors and continue running.
 
 
+## 🧪 Module 2: Automated Testing & Mocking
+Implemented a robust Quality Assurance (QA) layer to ensure application stability and logic verification.
+
+### Technical Achievements:
+* **Unit Testing (xUnit):** Developed automated test cases covering the full CRUD lifecycle, ensuring 100% reliability of the Repository logic.
+* **Mocking (Moq):** Leveraged the `Moq` library to simulate data-layer dependencies. This allows for high-speed testing by isolating business logic from Physical File I/O.
+* **Negative Testing:** Verified that the "Defensive Layer" correctly triggers custom exceptions (`EntityNotFoundException`) when encountering invalid data.
+* **Behavioral Verification:** Used Mock Verifications to confirm that the application interacts with the data layer exactly as intended, preventing redundant operations.
+
+
+
+### Test Coverage Includes:
+- **Happy Path:** Adding, updating, and retrieving tasks.
+- **Edge Cases:** Handling empty lists and non-existent IDs.
+- **System Failure:** Mocking disk/database errors to test application resilience.
+
 
 ## 🛠️ Tech Stack & Patterns
 * **Framework:** .NET 9 (C# 13)
