@@ -11,7 +11,7 @@ using TaskManager.CLI.Persistence;
 namespace TaskManager.CLI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260226143215_InitialCreate")]
+    [Migration("20260226164728_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

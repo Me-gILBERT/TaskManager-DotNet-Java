@@ -23,6 +23,12 @@ serviceCollection.AddTransient<TaskService>();
 // --- 2. BUILD THE PROVIDER ---
 var serviceProvider = serviceCollection.BuildServiceProvider();
 
+using (var scope = serviceProvider.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated(); // This forces the DB and Tables to exist immediately
+}
+
 // --- 3. RESOLVE THE SERVICE ---
 // We ask for the TaskService; the container automatically injects the SqlRepository into it.
 var taskService = serviceProvider.GetRequiredService<TaskService>();
@@ -35,6 +41,7 @@ while (running)
 {
     try
     {
+
         Console.Clear();
         Console.WriteLine("========================================");
         Console.WriteLine("    JAKARTA TASK MANAGER (VER 1.1)     ");
