@@ -1,11 +1,24 @@
-﻿using TaskManager.CLI.Models;
-using TaskManager.CLI.Interfaces;
+﻿using Microsoft.Extensions.DependencyInjection;
 using TaskManager.CLI.Data;
 using TaskManager.CLI.Exceptions;
+using TaskManager.CLI.Interfaces;
+using TaskManager.CLI.Models;
+using TaskManager.CLI.Services;
 
-// 1. Setup the persistent repository
-IRepository<ProjectTask> taskRepo = new JsonRepository<ProjectTask>("tasks.json");
+// 1. Setup the "Menu" of services
+var serviceCollection = new ServiceCollection();
 
+// 2. Register our "Ingredients"
+serviceCollection.AddSingleton<IRepository<ProjectTask>>(new JsonRepository<ProjectTask>("tasks.json"));
+
+// 3. Build the "Kitchen" (The Provider)
+var serviceProvider = serviceCollection.BuildServiceProvider();
+
+// Program.cs now only talks to TaskService, never the Repo directly!
+var taskService = serviceProvider.GetRequiredService<TaskService>();
+
+// 4. "Order" the service
+var taskRepo = serviceProvider.GetRequiredService<IRepository<ProjectTask>>();
 bool running = true;
 
 while (running)

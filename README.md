@@ -27,6 +27,7 @@ Over the course of Module 1, the application evolved from a simple console scrip
 * **Graceful Degradation:** Wrapped the main execution loop in `try-catch` blocks, allowing the app to recover from errors and continue running.
 
 
+
 ## 🧪 Module 2: Automated Testing & Mocking
 Implemented a robust Quality Assurance (QA) layer to ensure application stability and logic verification.
 
@@ -43,6 +44,14 @@ Implemented a robust Quality Assurance (QA) layer to ensure application stabilit
 - **Edge Cases:** Handling empty lists and non-existent IDs.
 - **System Failure:** Mocking disk/database errors to test application resilience.
 
+## 🏗️ Module 3: Dependency Injection & Service Layer
+Refactored the application architecture to follow the Dependency Inversion Principle (SOLID), moving towards a Service-Oriented Architecture.
+
+### Technical Achievements:
+* **Dependency Injection (DI):** Integrated `Microsoft.Extensions.DependencyInjection` to manage object lifecycles and dependencies centrally.
+* **Service Layer Pattern:** Introduced a `TaskService` to encapsulate business logic, further decoupling the User Interface from the Data Access Layer.
+* **Singleton & Transient Lifetimes:** Leveraged specific service lifetimes to optimize memory usage and ensure data consistency across the application.
+* **Clean Architecture:** Successfully removed "hard-coded" dependencies, allowing for seamless swapping of storage engines or UI frameworks.
 
 ## 🛠️ Tech Stack & Patterns
 * **Framework:** .NET 9 (C# 13)
