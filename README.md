@@ -35,12 +35,18 @@ Refactored the application into a Service-Oriented Architecture (SOA) to achieve
 ---
 
 ## 🗄️ Module 4: Relational Persistence (EF Core & SQL)
-Transitioned from flat-file storage to a professional relational database environment.
-* **EF Core Integration:** Migrated from `tasks.json` to **SQLite** using **Entity Framework Core**.
-* **Code-First Migrations:** Managed database schema evolution through version-controlled migrations (`Add-Migration` & `Update-Database`).
-* **Architectural Flexibility:** Demonstrated the power of the Repository Pattern by swapping the entire storage engine with only **two lines of code change** in the DI container.
+Successfully transitioned from local JSON file storage to a professional relational database architecture using **Entity Framework Core**.
+
+### Technical Achievements:
+* **Object-Relational Mapping (ORM):** Implemented `AppDbContext` to map C# POCO classes to a **SQLite** database schema, eliminating manual serialization logic.
+* **Code-First Migrations:** Managed database schema evolution using **EF Core Migrations** (`Add-Migration` and `Update-Database`), ensuring version-controlled data structures.
+* **Asynchronous Data Access:** Utilized `ToListAsync`, `FindAsync`, and `SaveChangesAsync` to ensure high-performance, non-blocking I/O operations suitable for enterprise scale.
+* **Architectural Flexibility:** Demonstrated the power of **Dependency Injection** by swapping the storage provider from JSON to SQL with zero changes required in the `TaskService` or UI layers.
 
 
+
+### Why This Matters:
+This migration proves the application is "Provider Agnostic." Because the system depends on the `IRepository<T>` interface rather than a specific file path, we can swap SQLite for **SQL Server** or **PostgreSQL** in minutes by simply updating the DI configuration.
 
 ---
 

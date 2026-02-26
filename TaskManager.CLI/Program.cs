@@ -3,18 +3,28 @@ using TaskManager.CLI.Data;
 using TaskManager.CLI.Exceptions;
 using TaskManager.CLI.Interfaces;
 using TaskManager.CLI.Models;
+using TaskManager.CLI.Persistence;
 using TaskManager.CLI.Services;
 
-// 1. Setup the "Menu" of services
+// --- 1. SET UP THE SERVICE CONTAINER ---
 var serviceCollection = new ServiceCollection();
 
-// 2. Register our "Ingredients"
-serviceCollection.AddSingleton<IRepository<ProjectTask>>(new JsonRepository<ProjectTask>("tasks.json"));
+// A. Register the Database Context (EF Core)
+serviceCollection.AddDbContext<AppDbContext>();
 
-// 3. Build the "Kitchen" (The Provider)
+// B. Register the SQL Repository 
+// We use 'AddScoped' for databases to ensure connections are closed after use.
+serviceCollection.AddScoped(typeof(IRepository<>), typeof(SqlRepository<>));
+
+// C. Register the Service Layer (The "Chef")
+// This was missing in your last run! 
+serviceCollection.AddTransient<TaskService>();
+
+// --- 2. BUILD THE PROVIDER ---
 var serviceProvider = serviceCollection.BuildServiceProvider();
 
-// Program.cs now only talks to TaskService, never the Repo directly!
+// --- 3. RESOLVE THE SERVICE ---
+// We ask for the TaskService; the container automatically injects the SqlRepository into it.
 var taskService = serviceProvider.GetRequiredService<TaskService>();
 
 // 4. "Order" the service
