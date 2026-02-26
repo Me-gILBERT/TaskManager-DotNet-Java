@@ -4,3 +4,4 @@
 *.user
 VisualStudio
 DotnetCore
+*.json
