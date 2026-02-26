@@ -47,6 +47,18 @@ Successfully transitioned from local JSON file storage to a professional relatio
 
 ---
 
+## 🌐 Module 5: ASP.NET Core Web API (In Progress)
+
+Transitioning the application from a local CLI tool to a modern, scalable RESTful Web Service.
+
+### Objectives:
+
+- **REST API Design:** Implementing standard HTTP verbs (GET, POST, PUT, DELETE).
+- **Cross-Project Integration:** Sharing the Domain and Logic layers between the CLI and Web API projects.
+- **Swagger/OpenAPI:** Documenting the API endpoints for third-party consumption.
+
+---
+
 ## 🛠️ Tech Stack & Skills
 
 - **Language:** C# 13 (.NET 9)
