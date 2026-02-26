@@ -1,6 +1,7 @@
-﻿using System.Text.Json;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
+using System.Text.Json;
+using TaskManager.CLI.Exceptions;
 using TaskManager.CLI.Interfaces;
 
 namespace TaskManager.CLI.Data;
@@ -60,12 +61,15 @@ public class JsonRepository<T> : IRepository<T> where T : class, IEntity
         var items = await LoadFromFileAsync();
         var existing = items.FirstOrDefault(x => x.Id == entity.Id);
 
-        if (existing != null)
+        // GUARD CLAUSE
+        if (existing == null)
         {
-            var index = items.IndexOf(existing);
-            items[index] = entity;
-            await SaveToFileAsync(items);
+            throw new EntityNotFoundException(typeof(T).Name, entity.Id);
         }
+
+        var index = items.IndexOf(existing);
+        items[index] = entity;
+        await SaveToFileAsync(items);
     }
 
     public async Task DeleteAsync(int id)
@@ -73,10 +77,15 @@ public class JsonRepository<T> : IRepository<T> where T : class, IEntity
         var items = await LoadFromFileAsync();
         var item = items.FirstOrDefault(x => x.Id == id);
 
-        if (item != null)
+        // GUARD CLAUSE: If the user types an ID that doesn't exist
+        if (item == null)
         {
-            items.Remove(item);
-            await SaveToFileAsync(items);
+            throw new EntityNotFoundException(typeof(T).Name, id);
         }
+
+        items.Remove(item);
+        await SaveToFileAsync(items);
     }
+
+
 }

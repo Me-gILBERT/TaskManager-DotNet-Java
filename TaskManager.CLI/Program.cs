@@ -1,57 +1,112 @@
 ﻿using TaskManager.CLI.Models;
 using TaskManager.CLI.Interfaces;
 using TaskManager.CLI.Data;
+using TaskManager.CLI.Exceptions;
 
-// Initialize the persistent repository
+// 1. Setup the persistent repository
 IRepository<ProjectTask> taskRepo = new JsonRepository<ProjectTask>("tasks.json");
 
 bool running = true;
 
 while (running)
 {
-    Console.Clear();
-    Console.WriteLine("=== JAKARTA DEV TASK MANAGER ===");
-
-    // 1. Display current tasks from JSON
-    var tasks = await taskRepo.GetAllAsync();
-    foreach (var t in tasks)
+    try
     {
-        Console.WriteLine(t.ToString());
-    }
+        Console.Clear();
+        Console.WriteLine("========================================");
+        Console.WriteLine("    JAKARTA TASK MANAGER (VER 1.1)     ");
+        Console.WriteLine("========================================");
 
-    Console.WriteLine("\n[A] Add Task | [C] Mark Completed | [D] Delete | [Q] Quit");
-    var input = Console.ReadKey(true).Key;
-
-    switch (input)
-    {
-        case ConsoleKey.A:
-            Console.Write("\nEnter Task Title: ");
-            var title = Console.ReadLine();
-            if (!string.IsNullOrEmpty(title))
-                await taskRepo.AddAsync(new ProjectTask { Title = title });
-            break;
-
-        case ConsoleKey.C:
-            Console.Write("\nEnter ID to Complete: ");
-            if (int.TryParse(Console.ReadLine(), out int cId))
+        // Load and display current tasks
+        var tasks = await taskRepo.GetAllAsync();
+        if (!tasks.Any())
+        {
+            Console.WriteLine("\n [ No tasks found. Start by adding one! ]");
+        }
+        else
+        {
+            foreach (var t in tasks)
             {
-                var task = await taskRepo.GetByIdAsync(cId);
-                if (task != null)
-                {
-                    task.IsCompleted = true;
-                    await taskRepo.UpdateAsync(task);
-                }
+                // We'll use a simple colored output for completion status
+                var status = t.IsCompleted ? "[DONE]" : "[PENDING]";
+                Console.WriteLine($"{t.Id}. {status} {t.Title}");
             }
-            break;
+        }
 
-        case ConsoleKey.D:
-            Console.Write("\nEnter ID to Delete: ");
-            if (int.TryParse(Console.ReadLine(), out int dId))
-                await taskRepo.DeleteAsync(dId);
-            break;
+        Console.WriteLine("\n----------------------------------------");
+        Console.WriteLine("[A] Add Task | [C] Complete | [D] Delete | [Q] Quit");
+        Console.Write("Choose an option: ");
 
-        case ConsoleKey.Q:
-            running = false;
-            break;
+        var input = Console.ReadKey(true).Key;
+
+        switch (input)
+        {
+            case ConsoleKey.A:
+                Console.Write("\n\nEnter Task Title: ");
+                var title = Console.ReadLine();
+
+                // --- INPUT VALIDATION ---
+                if (string.IsNullOrWhiteSpace(title))
+                {
+                    throw new ArgumentException("Task title cannot be empty or just spaces.");
+                }
+
+                await taskRepo.AddAsync(new ProjectTask { Title = title, IsCompleted = false });
+                break;
+
+            case ConsoleKey.C:
+                Console.Write("\n\nEnter Task ID to mark as Completed: ");
+                if (int.TryParse(Console.ReadLine(), out int cId))
+                {
+                    var taskToComplete = await taskRepo.GetByIdAsync(cId);
+
+                    // The Repository will throw EntityNotFoundException if we tried 
+                    // to call an update on a null, but we check here for better UI flow.
+                    if (taskToComplete == null) throw new EntityNotFoundException("Task", cId);
+
+                    taskToComplete.IsCompleted = true;
+                    await taskRepo.UpdateAsync(taskToComplete);
+                }
+                break;
+
+            case ConsoleKey.D:
+                Console.Write("\n\nEnter Task ID to Delete: ");
+                if (int.TryParse(Console.ReadLine(), out int dId))
+                {
+                    await taskRepo.DeleteAsync(dId);
+                    Console.WriteLine("\nTask deleted successfully!");
+                }
+                break;
+
+            case ConsoleKey.Q:
+                running = false;
+                break;
+        }
+    }
+    // --- ERROR HANDLING LAYER ---
+    catch (EntityNotFoundException ex)
+    {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine($"\n\n[NOT FOUND] {ex.Message}");
+        Console.ResetColor();
+        Console.WriteLine("Press any key to return to menu...");
+        Console.ReadKey();
+    }
+    catch (ArgumentException ex)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"\n\n[VALIDATION ERROR] {ex.Message}");
+        Console.ResetColor();
+        Console.WriteLine("Press any key to try again...");
+        Console.ReadKey();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"\n\n[CRITICAL ERROR] Something went wrong: {ex.Message}");
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadKey();
+        running = false;
     }
 }
+
+Console.WriteLine("\nTerima Kasih! Closing Task Manager...");
